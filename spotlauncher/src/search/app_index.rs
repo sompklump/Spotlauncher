@@ -38,12 +38,16 @@ impl AppIndex {
 
         let query = query.to_lowercase();
 
-        self.app_index
+        let mut arr: Vec<AppInfo> = self.app_index
             .borrow()
             .iter()
             .cloned()
             .filter(|app: &AppInfo| app.display_name().to_lowercase().contains(&query))
             .take(10)
-            .collect()
+            .collect();
+
+        arr.sort_by(|a: &AppInfo,b: &AppInfo| a.name().to_lowercase().cmp(&b.name().to_lowercase()));
+
+        arr
     }
 }

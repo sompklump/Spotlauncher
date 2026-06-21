@@ -51,9 +51,13 @@ impl FileIndex {
             .output()
             .unwrap_or_else(|e| panic!("plocate failed: {e}"));
 
-        String::from_utf8_lossy(&output.stdout)
+        let mut arr: Vec<AppFile> = String::from_utf8_lossy(&output.stdout)
             .lines()
             .map(AppFile::from_path_str)
-            .collect()
+            .collect();
+
+        arr.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+
+        arr
     }
 }
