@@ -1,0 +1,19 @@
+[package]
+name = "spotlauncher"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+async-channel = "2.5.0"
+gtk4 = "0.11.3"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk4-layer-shell = "0.8.0"
+rdev = "0.5.3"
+input_query = "=0.3.0"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+rdev = "0.5.3"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+rdev = "0.5.3"
