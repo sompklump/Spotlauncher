@@ -1,2 +1,2 @@
 # Spotlauncher
-App / file launcher for linux / Mac (WIP)
+App / file launcher for linux / Mac (WIP) made in Rust
