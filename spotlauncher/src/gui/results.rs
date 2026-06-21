@@ -18,6 +18,7 @@ pub struct ResultsList {
     pub app_list_active: Rc<Cell<bool>>,
     app_results: Rc<RefCell<Vec<AppInfo>>>, // interior mutable
     file_results: Rc<RefCell<Vec<AppFile>>>,
+    previous_index: Rc<Cell<i32>>,
 }
 
 impl ResultsList {
@@ -88,6 +89,7 @@ impl ResultsList {
             app_results: Rc::new(RefCell::new(vec![])),
             file_results: Rc::new(RefCell::new(vec![])),
             app_list_active: Rc::new(Cell::new(true)),
+            previous_index: Rc::new(Cell::new(0)),
         }
     }
 
@@ -241,20 +243,34 @@ impl ResultsList {
     }
 
     fn refresh_list_selection(&self) {
+        // Get new and old list
         let (list, old_list) = if self.app_list_active.get() {
             (&self.app_list, &self.file_list)
         } else {
             (&self.file_list, &self.app_list)
         };
 
-        old_list.unselect_all();
-        list.grab_focus();
+        // Set selected row to the previous index
+        if let Some(row) = list.row_at_index(self.previous_index.get()) {
+            list.select_row(Some(&row));
+        }
 
+        // Default to index 0 if it's populated when the current selected row is invalid
         if list.selected_row().is_none() {
             if let Some(row) = list.row_at_index(0) {
                 list.select_row(Some(&row));
             }
         }
+
+        let sel_row: Option<gtk4::ListBoxRow> = old_list.selected_row();
+
+        if let Some(row) = sel_row {
+            self.previous_index.set(row.index());
+        }
+
+        old_list.unselect_all();
+
+        list.grab_focus();
 
         // Defer focus grab to after current event is fully processed
         let row = list.selected_row().clone();
